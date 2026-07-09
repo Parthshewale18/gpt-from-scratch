@@ -1,0 +1,97 @@
+A Field Guide to Machine Learning and Artificial Intelligence
+
+Introduction
+
+Artificial intelligence is the broad effort to build machines that perform tasks which, if done by a person, would be said to require intelligence. Machine learning is the dominant approach to building such machines today. Instead of writing explicit rules for every situation, an engineer collects examples of the behavior they want and lets an algorithm find the pattern that connects inputs to outputs. The algorithm then applies that pattern to new, unseen inputs. This shift from hand written rules to learned patterns is the central idea of the modern field.
+
+Early History
+
+The dream of thinking machines predates computers themselves. Philosophers speculated about mechanical reasoning for centuries, but the practical study of artificial intelligence began in the middle of the twentieth century, once electronic computers made it possible to test ideas about reasoning and learning. Early researchers built programs that played checkers, proved simple theorems, and solved puzzles using search through a space of possible moves. These systems were symbolic: they represented knowledge as explicit rules and facts, and reasoning was a matter of applying logical operations to those symbols. Symbolic systems achieved early successes but struggled with tasks that humans find effortless, such as recognizing a face or understanding a sentence spoken in a noisy room.
+
+The Rise of Connectionism
+
+A parallel tradition, often called connectionism, took inspiration from biological neurons. Instead of explicit rules, a connectionist system consists of many simple units connected by weighted links. Learning happens by adjusting the weights so that the network's output more closely matches a desired target. The perceptron, an early connectionist model, could learn to separate two classes of data if they were linearly separable. Critics pointed out that a single layer perceptron could not solve certain simple problems, and interest in neural networks declined for a period commonly referred to as an AI winter. Interest revived once researchers demonstrated that networks with multiple layers, trained using an algorithm called backpropagation, could learn far more complex functions.
+
+Neural Networks
+
+A neural network is a function built from layers of simple computational units. Each unit computes a weighted sum of its inputs, adds a bias term, and passes the result through a nonlinear activation function. Stacking many such layers allows a network to approximate extremely complicated functions, a property formalized in the universal approximation theorem. The weights and biases are the parameters of the network, and training consists of finding parameter values that make the network's predictions match the training data as closely as possible.
+
+Backpropagation and Gradient Descent
+
+Backpropagation is the algorithm that makes training deep networks practical. It uses the chain rule of calculus to compute, layer by layer, how much each parameter contributed to the final error. This produces a gradient, a vector pointing in the direction that would most increase the error if the parameters moved that way. Gradient descent then nudges every parameter a small step in the opposite direction, gradually reducing the error. In practice, engineers use stochastic gradient descent, where the gradient is estimated from a small random batch of examples rather than the whole dataset, because this is far cheaper to compute and often generalizes better.
+
+Optimizers
+
+Plain gradient descent can be slow or unstable, so practitioners typically use improved optimizers. Momentum accumulates a running average of past gradients so that the parameter updates smooth out noisy oscillations and accelerate through shallow, consistent slopes. RMSProp adapts the learning rate for each parameter individually based on the recent magnitude of its gradient. Adam combines both ideas, tracking both a momentum term and an adaptive learning rate, and has become the default choice for training many kinds of neural networks, including large language models.
+
+Overfitting and Regularization
+
+A model that fits its training data extremely well is not necessarily useful, because the real goal is to perform well on new data it has never seen. When a model learns the noise and idiosyncrasies of its training set rather than the underlying pattern, it is said to overfit. Regularization techniques combat this. Weight decay penalizes large parameter values, encouraging simpler functions. Dropout randomly disables a fraction of units during training, forcing the network to build redundant, robust representations rather than relying on any single unit. Early stopping halts training once performance on a held out validation set stops improving, even if training loss keeps falling. Collecting more diverse training data is often the single most effective way to reduce overfitting.
+
+Convolutional Networks
+
+Convolutional neural networks were designed for data with spatial structure, most famously images. Instead of connecting every input pixel to every unit in the next layer, a convolutional layer slides a small filter across the image, computing the same weighted sum at every position. This gives the network two useful properties: far fewer parameters than a fully connected layer, and translation invariance, meaning a pattern learned in one part of the image can be recognized anywhere else in the image. Stacking convolutional layers lets a network build up from simple edge detectors in early layers to detectors for complex objects in later layers.
+
+Recurrent Networks
+
+Recurrent neural networks were designed for sequential data such as text, audio, or time series. A recurrent unit maintains a hidden state that is updated at every time step, combining the current input with information carried forward from previous steps. This lets the network, in principle, use information from arbitrarily far back in a sequence. In practice, plain recurrent networks struggle to learn long range dependencies because gradients tend to vanish or explode as they are propagated back through many time steps. Long short term memory networks, commonly abbreviated LSTM, address this with gated units that can selectively remember or forget information, making it possible to carry signal across much longer sequences.
+
+Attention and the Transformer
+
+Attention mechanisms were introduced to let a model focus on the most relevant parts of its input when producing each part of its output, rather than compressing an entire sequence into a single fixed size vector. The transformer architecture, introduced in a paper titled Attention Is All You Need, dispensed with recurrence entirely and built a model purely out of attention layers and feedforward layers. Self attention allows every position in a sequence to directly attend to every other position, which is both more parallelizable on modern hardware and better at capturing long range relationships than recurrent architectures. The transformer became the foundation for nearly all modern large language models.
+
+How Self Attention Works
+
+In self attention, every token in a sequence is projected into three vectors called the query, the key, and the value. The query of one token is compared against the keys of all tokens, including itself, to produce a set of similarity scores. These scores are turned into weights using a softmax function, so they sum to one and emphasize the most relevant tokens. The output for that position is then a weighted sum of the value vectors, using those attention weights. Multi head attention runs several of these attention computations in parallel, each with its own learned projections, allowing the model to attend to different kinds of relationships simultaneously, such as syntax in one head and topical similarity in another.
+
+Tokenization
+
+Before text can be fed into a neural network, it must be converted into numbers. Tokenization is the process of splitting text into discrete units and mapping each unit to an integer. Character level tokenization treats every individual character as a token, which keeps the vocabulary tiny but makes sequences long. Word level tokenization treats every word as a token, which shortens sequences but leads to enormous vocabularies and struggles with rare or novel words. Modern large language models typically use subword tokenization schemes such as byte pair encoding, which start from individual characters and iteratively merge the most frequent adjacent pairs into new tokens, producing a vocabulary that represents common words as single tokens while still being able to spell out rare words piece by piece.
+
+Embeddings
+
+An embedding is a learned vector representation of a discrete object, such as a word, token, or item. Rather than representing a token as a single arbitrary integer, an embedding layer maps it to a dense vector of continuous values, typically several hundred dimensions long. During training, the network adjusts these vectors so that tokens used in similar contexts end up close together in the embedding space. This geometric structure often captures meaningful relationships, and embeddings trained for one task can frequently be reused as a starting point for another, a practice known as transfer learning.
+
+Language Models
+
+A language model estimates the probability of a sequence of tokens, typically by predicting each token given the tokens that came before it. Training such a model requires nothing more than raw text, since the correct answer at every position is simply the next token in the training corpus, which makes this a form of self supervised learning that does not require manually labeled data. Once trained on enough text, a language model can be used to generate new text by repeatedly sampling a next token from its predicted distribution and feeding that token back in as part of the input for the following prediction.
+
+Pretraining and Fine Tuning
+
+Large language models are typically built in two stages. Pretraining exposes the model to a vast and diverse corpus of text so that it learns general patterns of language, facts about the world, and reasoning skills, purely by predicting missing or upcoming tokens. Fine tuning then adapts the pretrained model to a narrower task or a desired style of behavior, often using a much smaller, carefully curated dataset. A widely used technique called reinforcement learning from human feedback further refines a model's behavior by training it to produce outputs that human raters prefer, using a separate reward model trained on human comparisons between candidate responses.
+
+Generative Adversarial Networks
+
+A generative adversarial network consists of two neural networks trained together in competition. The generator tries to produce realistic synthetic data, such as images, starting from random noise. The discriminator tries to distinguish the generator's fake outputs from real examples drawn from the training set. As training proceeds, the generator improves at fooling the discriminator, and the discriminator improves at catching the generator, and this adversarial pressure can push the generator toward producing remarkably realistic outputs, though training such systems can be unstable and requires careful tuning.
+
+Diffusion Models
+
+Diffusion models generate data through a different mechanism. Training starts by gradually adding random noise to real examples over many steps until they become indistinguishable from pure noise. The network is trained to reverse this process, predicting and removing a small amount of noise at each step. To generate a new sample, the process starts from pure random noise and repeatedly applies the trained denoising step, gradually revealing a coherent image, audio clip, or other output. Diffusion models have become a leading approach for high quality image and video generation.
+
+Reinforcement Learning
+
+Reinforcement learning studies how an agent should choose actions in an environment in order to maximize a cumulative reward signal over time. Unlike supervised learning, the agent is never told the correct action directly; it must discover good behavior through trial and error, observing the rewards its actions produce. Key concepts include the policy, which is the agent's strategy for choosing actions, and the value function, which estimates how much future reward can be expected from a given state. Q learning is a classic algorithm that learns the expected value of taking a particular action in a particular state. Policy gradient methods instead directly adjust the parameters of the policy to increase the probability of actions that led to higher rewards.
+
+Evaluation and Metrics
+
+Judging a machine learning model requires metrics appropriate to the task. For classification problems, accuracy measures the fraction of correct predictions, while precision and recall separately capture how many predicted positives were correct and how many actual positives were found, which matters when the classes are imbalanced. For language models, perplexity measures how well the model predicts held out text, with lower perplexity indicating better predictions. For generative systems producing open ended text or images, human evaluation and preference comparisons often matter more than any single automated number, since many aspects of quality are difficult to capture with a formula.
+
+The Bias Variance Tradeoff
+
+A useful way to think about model performance is the tradeoff between bias and variance. A model with high bias is too simple to capture the true pattern in the data and will underfit, performing poorly on both training and new data. A model with high variance is overly sensitive to the specific training examples it saw and will overfit, performing well on training data but poorly on new data. Choosing model capacity, amount of training data, and regularization strength are all ways of navigating this tradeoff, aiming for a model complex enough to capture real patterns but not so complex that it memorizes noise.
+
+Scaling Laws
+
+Researchers studying large language models observed that performance improves smoothly and predictably as three quantities increase together: the number of parameters in the model, the amount of training data, and the amount of compute used for training. These relationships, known as scaling laws, have guided the design of increasingly large models, since they allow researchers to predict, before running an expensive training run, roughly how much a given increase in scale will improve performance. Scaling laws also revealed that many earlier large models were undertrained relative to their size, and that a more balanced increase in both parameters and data yields better results than increasing parameters alone.
+
+Interpretability
+
+As neural networks have grown larger and more capable, understanding why they produce a particular output has become an important and difficult research problem. Interpretability research tries to open up the black box, looking for individual units, groups of units, or directions in activation space that correspond to identifiable concepts. Techniques include visualizing which inputs most strongly activate a given unit, tracing how information flows through a network's layers, and training smaller auxiliary models to predict a network's internal computations in more understandable terms. Better interpretability is valuable both for debugging models and for building justified trust in their behavior.
+
+Ethics and Safety
+
+The growing capability of machine learning systems has brought growing attention to the ways they can go wrong. Models trained on real world data can absorb and amplify biases present in that data, leading to unfair treatment of particular groups. Models can also be confidently wrong, producing fluent but false statements, a phenomenon often called hallucination in the context of language models. As systems are given more autonomy and are deployed in higher stakes settings, researchers study how to make them more robust, more honest about their own uncertainty, and more aligned with the intentions of the people using them, an area of study generally referred to as AI safety or alignment.
+
+Closing Thoughts
+
+Machine learning has moved from a niche academic pursuit to a technology embedded in search engines, recommendation systems, translation tools, image generators, and conversational assistants. The underlying ideas, weighted sums, nonlinear activations, gradients, and attention, are individually simple, but combined at scale and trained on enormous amounts of data, they give rise to systems capable of remarkably sophisticated behavior. Building a small model from scratch, even a tiny character level transformer trained on a modest corpus, is one of the clearest ways to see these ideas stop being abstract and start being code that actually runs.
